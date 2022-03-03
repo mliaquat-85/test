@@ -38,8 +38,10 @@
                 $('.winner-user').addClass('hidden-draw');
                 $('.buttons .btn').click(function () { Draw(this); });
 
+                ShowNumbers('0000000');
                 ChangeTitle();
-                Marquee();
+                MarqueeLeftToRight();
+                MarqueeTopToBottom();
             }
             function ChangeTitle() {
                 var dv = $('#dv-title span');
@@ -64,7 +66,7 @@
                 dv.attr('index', idx).css('background', _clr.b).css('color', _clr.t);
                 setTimeout(ChangeTitle, 700);
             }
-            function Marquee() {
+            function MarqueeLeftToRight() {
                 var ltr = $('#r-l-1,#r-l-2');
                 var left = ltr.css('left');
                 var _steps = 1;
@@ -85,13 +87,41 @@
                 }
                 ltr.attr('move-to', dir);
                 ltr.css('left', left + 'px');
-                setTimeout(Marquee, 3);
+                setTimeout(MarqueeLeftToRight, 3);
             }
+            function MarqueeTopToBottom() {
+                var ltr = $('#t-b-1,#t-b-2');
+                var left = ltr.css('top');
+                var _steps = 1;
+                left = parseInt(left.substring(0, left.length - 2));
+                var max = screen.availHeight - 200;
+                var dir = ltr.attr('move-to');
+                if (dir == null || dir == undefined) dir = 'ltr';
+
+                if (dir == 'ltr' && left < max) left += _steps;
+                else if (dir == 'ltr' && left >= max) {
+                    left -= _steps;
+                    dir = 'rtl'
+                }
+                else if (dir == 'rtl' && left > 0) left -= _steps;
+                else if (dir == 'rtl' && left <= 0) {
+                    left += _steps;
+                    dir = 'ltr'
+                }
+                ltr.attr('move-to', dir);
+                ltr.css('top', left + 'px');
+                setTimeout(MarqueeTopToBottom, 3);
+            }
+
             var _already = false;
             var _attempt = 0;
             var _choosen = [];
             var _last_index = -1;
             var _last_btn = null;
+            function ShowNumbers(_id) {
+                var dvs = $('.numbers div');
+                for (var i = 0; i < _id.length; i++) $(dvs[i]).text(_id[i]);
+            }
             function Draw(btn) {
                 _last_btn = $(btn);
 
@@ -112,16 +142,14 @@
                     $('.plan', dv).text(_num[_last_index]);
                     $('.award', dv).text(_last_btn.text());
                     dv.hide().removeClass('hidden-draw').fadeIn(500);
+                    ShowNumbers('0000000');
                     return;
                 }
                 _last_index = getRndInteger(0, _num.length);
                 if (_choosen.indexOf(_last_index) == -1) {
                     _attempt++;
 
-                    var _id = _num[_last_index];
-
-                    var dvs = $('.numbers div');
-                    for (var i = 0; i < _id.length; i++) $(dvs[i]).text(_id[i]);
+                    ShowNumbers(_num[_last_index]);
                 }
                 setTimeout(ShowDraw, 500);
             }
