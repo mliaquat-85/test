@@ -1,0 +1,276 @@
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
+        <script type="text/javascript">
+            function getRndInteger(min, max) {
+                return Math.floor(Math.random() * (max - min)) + min;
+            }
+            var _num = [];
+            _num.push('3721179');
+            _num.push('5911621');
+            _num.push('5115556');
+            _num.push('2457271');
+            _num.push('5548529');
+            _num.push('6816821');
+            _num.push('2478546');
+            _num.push('6322447');
+            _num.push('3725812');
+            _num.push('3744873');
+            _num.push('1574781');
+            _num.push('2376627');
+            _num.push('5153294');
+            _num.push('3475162');
+            _num.push('8168733');
+            _num.push('1541892');
+            _num.push('2446293');
+            _num.push('6659752');
+
+
+            function openFullscreen() {
+                var dv = $('#dv-first')[0];
+                dv.style.height = screen.availHeight + 200;// + 100;
+
+                $('#r-l-2').css('bottom', '0px');
+                $('#t-b-2').css('right', '11px');
+                //document.documentElement.requestFullscreen();
+                $('.winner-user').addClass('hidden-draw');
+                $('.buttons .btn').click(function () { Draw(this); });
+
+                ChangeTitle();
+                Marquee();
+            }
+            function ChangeTitle() {
+                var dv = $('#dv-title span');
+                var idx = dv.attr('index');
+                if (idx == null || idx == undefined) idx = -1;
+                else idx = parseInt(idx);
+
+                idx = idx + 1;
+
+                var _clrs = [];
+
+                _clrs.push({ b: '#006fa7', t: '#fff' });
+                _clrs.push({ b: '#309e2b', t: '#fff' });
+                _clrs.push({ b: '#2b71b7', t: '#fff' });
+                _clrs.push({ b: '#447302', t: '#fff' });
+                _clrs.push({ b: '#b5d4a4', t: '#000' });
+                _clrs.push({ b: '', t: '#000' });
+
+                if (idx >= _clrs.length) idx = 0;
+
+                var _clr = _clrs[idx];
+                dv.attr('index', idx).css('background', _clr.b).css('color', _clr.t);
+                setTimeout(ChangeTitle, 700);
+            }
+            function Marquee() {
+                var ltr = $('#r-l-1,#r-l-2');
+                var left = ltr.css('left');
+                var _steps = 1;
+                left = parseInt(left.substring(0, left.length - 2));
+                var max = screen.availWidth - 110;
+                var dir = ltr.attr('move-to');
+                if (dir == null || dir == undefined) dir = 'ltr';
+
+                if (dir == 'ltr' && left < max) left += _steps;
+                else if (dir == 'ltr' && left >= max) {
+                    left -= _steps;
+                    dir = 'rtl'
+                }
+                else if (dir == 'rtl' && left > 0) left -= _steps;
+                else if (dir == 'rtl' && left <= 0) {
+                    left += _steps;
+                    dir = 'ltr'
+                }
+                ltr.attr('move-to', dir);
+                ltr.css('left', left + 'px');
+                setTimeout(Marquee, 3);
+            }
+            var _already = false;
+            var _attempt = 0;
+            var _choosen = [];
+            var _last_index = -1;
+            var _last_btn = null;
+            function Draw(btn) {
+                _last_btn = $(btn);
+
+                if (!_already) {
+                    btn = $(btn).css('opacity', '0.2');
+                    _already = true;
+                    _attempt = 0;
+
+                    ShowDraw();
+                }
+            }
+            function ShowDraw() {
+                if (_attempt >= 10) {
+                    _choosen.push(_last_index);
+                    _already = false;
+
+                    var dv = $('.hidden-draw:first');
+                    $('.plan', dv).text(_num[_last_index]);
+                    $('.award', dv).text(_last_btn.text());
+                    dv.hide().removeClass('hidden-draw').fadeIn(500);
+                    return;
+                }
+                _last_index = getRndInteger(0, _num.length);
+                if (_choosen.indexOf(_last_index) == -1) {
+                    _attempt++;
+
+                    var _id = _num[_last_index];
+
+                    var dvs = $('.numbers div');
+                    for (var i = 0; i < _id.length; i++) $(dvs[i]).text(_id[i]);
+                }
+                setTimeout(ShowDraw, 500);
+            }
+        </script>
+        <style type="text/css">
+            body {
+                padding: 0px;
+                margin:0px;
+            }
+            #dv-first {
+                background: url("Standard_Chartered_Bank_Building,_Karachi.jpg");
+                height: 780px;
+                width: 100%;
+                opacity: 0.3;
+                position:fixed;
+                z-index:-10;
+            }
+            #dv-title {
+                position: fixed;
+                font-family: fantasy;
+                width: 100%;
+                text-align: center;
+                font-size: 38px;
+                margin-top: 55px;
+            }
+            .marque {
+                font-family: fantasy;
+                position: absolute;
+            }
+            #t-b-1,#t-b-2 {
+                width: 1px;
+            }
+            .numbers,.buttons {
+                position: absolute;
+                top: 130px;
+                width: 100%;
+                text-align: center;
+            }
+            .numbers div {
+                background: url(numb-bg.png);
+                display: inline-block;
+                width: 63px;
+                height: 72px;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 61px;
+            }
+            .buttons {
+                top: 500px;
+            }
+                .buttons div {
+                    background: url(btn.png);
+                    width: 272px;
+                    height: 57px;
+                    display: inline-block;
+                    color: #fff;
+                    font-family: sans-serif;
+                    font-size: 44px;
+                    cursor:pointer;
+                }
+            .winner {
+                position: fixed;
+                top: 100px;
+            }
+            .winner.left {left:40px;}
+            .winner.right {left:940px;}
+
+            .winner-user {
+                background: url(win.png);
+                width: 309px;
+                height: 269px;
+            }
+                .winner-user.hidden-draw {
+                    display: none;
+                }
+                .winner-user .plan {
+                    position: relative;
+                    top: 148px;
+                    font-size: 47px;
+                    font-family: fantasy;
+                    color: #fff;
+                    left: 62px;
+                }
+                .winner-user .award {
+                    position: relative;
+                    top: 164px;
+                    left: 79px;
+                    font-size: 36px;
+                    font-family: fantasy;
+                }
+                .winner-user.middle {
+                    position: fixed;
+                    top: 224px;
+                    left: 457px;
+                }
+        </style>
+    </head>
+    <body id="body">
+        <span class="marque" id="r-l-1">SBIM Pakistan</span>
+        <span class="marque" id="r-l-2">SBIM Pakistan</span>
+        <span class="marque" id="t-b-1">S B I M P a k i s t a n</span>
+        <span class="marque" id="t-b-2">S B I M &nbsp; &nbsp; &nbsp; P a k i s t a n</span>
+        <div id="dv-title"><span style="display:inline-block;padding: 0px 17px 0 18px;">Standard Chartered Bank Pakistan</span></div>
+        <div id="dv-first"></div>
+        <div class="winner left">
+            <div class="winner-user">
+                <div class="plan">1234567</div>
+                <div class="award">Skyward</div>
+            </div>
+            <div class="winner-user">
+                <div class="plan">1521116</div>
+                <div class="award">Skyward</div>
+            </div>
+        </div>
+            <div class="winner-user middle">
+                <div class="plan">1521116</div>
+                <div class="award">Skyward</div>
+            </div>
+        <div class="winner right">
+            <div class="winner-user">
+                <div class="plan">1234567</div>
+                <div class="award">Skyward</div>
+            </div>
+            <div class="winner-user">
+                <div class="plan">1521116</div>
+                <div class="award">Skyward</div>
+            </div>
+        </div>
+
+        <div class="numbers">
+            <div>0</div>
+            <div>0</div>
+            <div>0</div>
+            <div>0</div>
+            <div>0</div>
+            <div>0</div>
+            <div>0</div>
+        </div>
+        <div class="buttons">
+            <div class="btn">Skyward</div>
+            <div class="btn">Skyward</div>
+            <div style="background:none;display:block; clear:both;height: 20px;"></div>
+            <div class="btn">iPhone</div>
+            <div class="btn">iPhone</div>
+            <div style="background:none;display:block; clear:both;height: 20px;"></div>
+            <div class="btn">iPhone</div>
+        </div>
+        <script type="text/javascript">           
+            openFullscreen();
+        </script>
+    </body>
+</html>
